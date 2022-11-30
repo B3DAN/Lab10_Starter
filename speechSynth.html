@@ -11,12 +11,13 @@
   <!-- Main Stylesheet & Scripts -->
   <link rel="stylesheet" href="assets/styles/global.css" />
   <script src="assets/scripts/speechSynth.js" type="module"></script>
+  <script src="https://unpkg.com/launchdarkly-js-client-sdk@2"></script>
 </head>
 
 <body>
   <header>
     <nav>
-      <a href="index.html" title="Go to  party horn">Party Horn</a>
+      <a href="index.html" title="Go to  party horn" id="Link">Party Horn</a>
     </nav>
   </header>
   <main>
@@ -32,6 +33,69 @@
       <button>Press to Talk</button>
     </section>
   </main>
+  <script>
+    // Set up the user properties. This user should appear on your LaunchDarkly users dashboard
+    // soon after you run the demo.
+    function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+    }   
+
+    //console.log(makeid(10));
+
+
+    var user = {
+      key: `${makeid(10)}`,
+    };
+    console.log("Hi?")
+    var ldclient = LDClient.initialize('6386795a1dd96111767ae060', user);
+    
+
+    function render() {
+      /*var randomVar = Math.random() < 0.5;
+      if(randomVar){
+        var flagValue = ldclient.variation('Icon-Change', false);
+        console.log("this works!");
+      }
+      else{
+        var flagValue = ldclient.variation('Icon-Change', true);
+        var body = document.querySelector('Link');
+        body.hidden = true;
+        console.log("this works?");
+        var nav = document.querySelector('nav');
+        let button = document.createElement('newIcon');
+        button.innerHTML = `<button onclick="window.locatinon.href='index.html';">
+                              <img height="27em" src="assets/icons/Rick.jpeg">
+                            </button>`
+        nav.append(button);
+      }*/
+
+      var flagValue = ldclient.variation('Icon-Change', true);
+      if(flagValue){
+        var body = document.querySelector('a');
+        //body.hidden = true;
+        //console.log("this works?");
+        //var nav = document.querySelector('nav');
+        //let button = document.createElement('newIcon');
+        body.innerHTML = `<button>
+                              <img height="27em" src="assets/icons/Rick.jpeg">
+                            </button>`
+        //nav.append(button);
+                          }
+      console.log(user.key);
+      //var label = (flagValue ? 'Showing' : 'Not showing') + ' your feature to ' + user.key;
+      console.log("SDK successfully connected! The value of Icon-Change is " + flagValue + " for " + user.key)
+      //div.replaceChild(document.createTextNode(label), div.firstChild);
+    }
+
+    ldclient.on('ready', render);
+    ldclient.on('change', render);
+  </script>
 </body>
 
 </html>
